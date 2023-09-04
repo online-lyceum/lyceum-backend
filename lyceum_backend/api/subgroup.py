@@ -1,10 +1,8 @@
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 
 from lyceum_backend import schemas
-from lyceum_backend.db import tables
-from lyceum_backend.services.auth import AuthService
 from lyceum_backend.services.subgroup import SubgroupService
 
 
@@ -17,7 +15,7 @@ router = APIRouter(
 
 @router.get(
     '/',
-    response_model=schemas.subgroups.Subgroup
+    response_model=schemas.subgroup.Subgroup
 )
 async def get_subgroups(
         service: SubgroupService = Depends()
@@ -25,25 +23,33 @@ async def get_subgroups(
     return await service.get_all()
 
 
-@router.subgroup(
+@router.get('/{subgroup_id}', response_model=schemas.subgroup.Subgroup)
+async def get_subgroup(
+        subgroup_id: int,
+        service: SubgroupService = Depends()
+):
+    return await service.get(subgroup_id)
+
+
+@router.post(
     '',
-    response_model=schemas.subgroups.Subgroup
+    response_model=schemas.subgroup.Subgroup
 )
 async def create_subgroup(
         subgroup_schema: schemas.subgroup.SubgroupCreate,
-        service: AuthService = Depends()
+        service: SubgroupService = Depends()
 ):
     return await service.create_subgroup(subgroup_schema)
 
 
 @router.patch(
     '/{subgroup_id}',
-    response_model=schemas.subgroups.Subgroup
+    response_model=schemas.subgroup.Subgroup
 )
 async def patch_subgroup(
         subgroup_id: int,
-        subgroup_schema: schemas.subgroups.SubgroupUpdate,
-        service: AuthService = Depends()
+        subgroup_schema: schemas.subgroup.SubgroupUpdate,
+        service: SubgroupService = Depends()
 ):
     return await service.update_subgroup(subgroup_id, subgroup_schema)
 
