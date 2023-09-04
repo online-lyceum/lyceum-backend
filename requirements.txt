@@ -1,0 +1,14 @@
+asyncpg==0.28.0
+setuptools==68.0.0
+alembic==1.11.2
+pydantic==2.1.1
+pydantic-settings==2.0.2
+fastapi==0.101.0
+SQLAlchemy==2.0.19
+gunicorn==21.2.0
+uvicorn==0.23.2
+click==8.1.6
+h11==0.14.0
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
+python-multipart==0.0.6

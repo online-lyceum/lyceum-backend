@@ -1,0 +1,33 @@
+version: '3'
+services:
+  api:
+    build: ./
+    restart: always
+    depends_on:
+      - "postgres"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=db
+      - POSTGRES_HOST=postgres
+      - SECRET_KEY=${SECRET_KEY}
+      - SESSION_LIFETIME=${SESSION_LIFETIME}
+    networks:
+      front_net:
+      default:
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=db
+      - POSTGRES_HOST=postgres
+    networks:
+      default:
+
+networks:
+  front_net:
+    external: true
