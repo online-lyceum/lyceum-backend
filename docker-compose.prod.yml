@@ -11,8 +11,6 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=db
       - POSTGRES_HOST=postgres
-      - SECRET_KEY=${SECRET_KEY}
-      - SESSION_LIFETIME=${SESSION_LIFETIME}
     networks:
       front_net:
       default:
