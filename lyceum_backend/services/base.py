@@ -13,4 +13,4 @@ class BaseService:
     ):
         self.session: AsyncSession = session
         self.response = response
-        self.redis = Redis(host='localhost')
+        self.redis = Redis(host='redis')

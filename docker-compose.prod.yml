@@ -26,6 +26,12 @@ services:
     networks:
       default:
 
+  redis:
+    image: redis/redis-stack-server:latest
+    restart: always
+    networks:
+      default:
+
 networks:
   front_net:
     external: true
