@@ -14,7 +14,7 @@ class SubgroupCreate(SubgroupBase):
 
 
 class Subgroup(SubgroupBase):
-    pass
+    id: int
 
 
 class SubgroupUpdate(BaseModel):
