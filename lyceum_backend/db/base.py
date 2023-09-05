@@ -36,8 +36,6 @@ async_session = sessionmaker(
     autocommit=False,
 )
 
-from lyceum_backend.db.tables import *
-
 
 async def init_models():
     async with engine.begin() as conn:

@@ -5,7 +5,6 @@ from fastapi import APIRouter, Depends
 from lyceum_backend import schemas
 from lyceum_backend.services.subgroup import SubgroupService
 
-
 logger = logging.getLogger(__name__)
 router = APIRouter(
     prefix='/api/subgroups',
@@ -14,8 +13,8 @@ router = APIRouter(
 
 
 @router.get(
-    '/',
-    response_model=schemas.subgroup.Subgroup
+    '',
+    response_model=list[schemas.subgroup.Subgroup]
 )
 async def get_subgroups(
         service: SubgroupService = Depends()
@@ -39,7 +38,7 @@ async def create_subgroup(
         subgroup_schema: schemas.subgroup.SubgroupCreate,
         service: SubgroupService = Depends()
 ):
-    return await service.create_subgroup(subgroup_schema)
+    return await service.create(subgroup_schema)
 
 
 @router.patch(
@@ -51,7 +50,7 @@ async def patch_subgroup(
         subgroup_schema: schemas.subgroup.SubgroupUpdate,
         service: SubgroupService = Depends()
 ):
-    return await service.update_subgroup(subgroup_id, subgroup_schema)
+    return await service.update(subgroup_id, subgroup_schema)
 
 
 @router.delete(

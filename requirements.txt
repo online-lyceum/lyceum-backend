@@ -1,4 +1,5 @@
 asyncpg==0.28.0
+redis[hiredis]==5.0.0
 setuptools==68.0.0
 alembic==1.11.2
 pydantic==2.1.1

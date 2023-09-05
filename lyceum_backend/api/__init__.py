@@ -1,1 +1,1 @@
-from . import (auth, hello, user)
+from . import (auth, group, hello, lesson, school, subgroup, user)

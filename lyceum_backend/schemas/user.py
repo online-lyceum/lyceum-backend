@@ -18,13 +18,16 @@ class UserCreate(UserBase):
 class User(UserBase):
     id: int
 
+    class Config:
+        from_attributes = True
+
 
 class UserUpdate(BaseModel):
     username: str | None = None
     first_name: str | None = None
     last_name: str | None = None
-    password: str | None = None
     subgroup_id: int | None = None
+    password: str | None = None
 
     class Config:
         from_attributes = True

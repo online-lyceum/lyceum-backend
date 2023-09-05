@@ -1,6 +1,6 @@
 from fastapi import status
 from fastapi.exceptions import HTTPException
-from sqlalchemy import exc, select, ScalarResult
+from sqlalchemy import exc, ScalarResult, select
 
 from lyceum_backend.db import tables
 from lyceum_backend.schemas import group as group_schemas
@@ -22,14 +22,21 @@ class GroupService(BaseService):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
         return group
 
-    async def create(self, group_schema: group_schemas.GroupCreate) -> tables.Group:
+    async def create(
+            self,
+            group_schema: group_schemas.GroupCreate
+            ) -> tables.Group:
         group = tables.Group(**group_schema.model_dump())
         self.session.add(group)
         await self.session.commit()
         self.response.status_code = status.HTTP_201_CREATED
         return group
 
-    async def update(self, group_id: int, group_schema: group_schemas.GroupUpdate) -> tables.Group:
+    async def update(
+            self,
+            group_id: int,
+            group_schema: group_schemas.GroupUpdate
+            ) -> tables.Group:
         query = select(tables.Group)
         query = query.filter_by(id=group_id)
         group = await self.session.scalar(query)

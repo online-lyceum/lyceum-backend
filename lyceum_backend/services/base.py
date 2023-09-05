@@ -1,4 +1,5 @@
 from fastapi import Depends, Response
+from redis import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from lyceum_backend.db.base import get_session
@@ -12,3 +13,4 @@ class BaseService:
     ):
         self.session: AsyncSession = session
         self.response = response
+        self.redis = Redis(host='localhost')

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 
 from lyceum_backend.db.base import Base
 
@@ -12,20 +12,23 @@ class User(Base):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     subgroup_id = Column(ForeignKey('subgroups.id'), nullable=True)
+    is_admin = Column(Boolean, nullable=False, default=False)
 
 
 class School(Base):
     __tablename__ = "schools"
     id = Column(Integer, autoincrement=True, primary_key=True, index=True)
     name = Column(String, nullable=False)
-    address = Column(String)
+    address = Column(String, default="")
 
 
 class Group(Base):
     __tablename__ = "groups"
 
     id = Column(Integer, autoincrement=True, primary_key=True, index=True)
-    school_id = Column(ForeignKey('schools.id'))
+    school_id = Column(
+        ForeignKey('schools.id', ondelete='CASCADE'), nullable=False
+        )
     number = Column(Integer)
     letter = Column(String)
 
@@ -33,7 +36,10 @@ class Group(Base):
 class Subgroup(Base):
     __tablename__ = 'subgroups'
     id = Column(Integer, autoincrement=True, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String, default="")
+    group_id = Column(
+        ForeignKey('groups.id', ondelete='CASCADE'), nullable=False
+        )
 
 
 class Lesson(Base):
@@ -42,11 +48,17 @@ class Lesson(Base):
     name = Column(String, nullable=False)
     start_dt = Column(DateTime, nullable=False)
     end_dt = Column(DateTime, nullable=False)
-    room = Column(String, server_default='')
-    teacher = Column(String, server_default='')
+    room = Column(String, default='')
+    teacher = Column(String, default='')
 
 
 class LessonSubgroup(Base):
     __tablename__ = "lesson_subgroups"
-    lesson_id = Column(ForeignKey('lessons.id'), nullable=False, primary_key=True)
-    subgroup_id = Column(ForeignKey('subgroups.id'), nullable=False, primary_key=True)
+    lesson_id = Column(
+        ForeignKey('lessons.id', ondelete='CASCADE'), nullable=False,
+        primary_key=True
+        )
+    subgroup_id = Column(
+        ForeignKey('subgroups.id', ondelete='CASCADE'), nullable=False,
+        primary_key=True
+        )

@@ -5,7 +5,6 @@ from fastapi import APIRouter, Depends
 from lyceum_backend import schemas
 from lyceum_backend.services.group import GroupService
 
-
 logger = logging.getLogger(__name__)
 router = APIRouter(
     prefix='/api/groups',
@@ -14,8 +13,8 @@ router = APIRouter(
 
 
 @router.get(
-    '/',
-    response_model=schemas.group.Group
+    '',
+    response_model=list[schemas.group.Group]
 )
 async def get_groups(
         service: GroupService = Depends()
@@ -39,7 +38,7 @@ async def create_group(
         group_schema: schemas.group.GroupCreate,
         service: GroupService = Depends()
 ):
-    return await service.create_group(group_schema)
+    return await service.create(group_schema)
 
 
 @router.patch(
@@ -51,7 +50,7 @@ async def patch_group(
         group_schema: schemas.group.GroupUpdate,
         service: GroupService = Depends()
 ):
-    return await service.update_group(group_id, group_schema)
+    return await service.update(group_id, group_schema)
 
 
 @router.delete(

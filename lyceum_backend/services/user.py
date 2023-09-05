@@ -13,7 +13,10 @@ class UserService(BaseService):
         query = query.order_by(tables.User.id)
         return await self.session.scalars(query)
 
-    async def get(self, user_id: int | None = None, username: str | None = None, raise_exception: bool = True) -> tables.User | None:
+    async def get(
+            self, user_id: int | None = None, username: str | None = None,
+            raise_exception: bool = True
+            ) -> tables.User | None:
         query = select(tables.User)
         if user_id is not None:
             query = query.filter_by(id=user_id)
@@ -33,7 +36,11 @@ class UserService(BaseService):
         self.response.status_code = status.HTTP_201_CREATED
         return user
 
-    async def update(self, user_id: int, user_schema: user_schemas.UserUpdate) -> tables.User:
+    async def update(
+            self,
+            user_id: int,
+            user_schema: user_schemas.UserUpdate
+            ) -> tables.User:
         query = select(tables.User)
         query = query.filter_by(id=user_id)
         user = await self.session.scalar(query)
@@ -42,8 +49,8 @@ class UserService(BaseService):
         user.username = user_schema.username or user.username
         user.first_name = user_schema.first_name or user.first_name
         user.last_name = user_schema.last_name or user.last_name
-        user.job_title = user_schema.job_title or user.job_title
-        user.hour_payment = user_schema.hour_payment or user.hour_payment
+        user.subgroup_id = user_schema.subgroup_id or user.subgroup_id
+        user.password = user_schema.password or user.password
         self.session.add(user)
         try:
             await self.session.commit()

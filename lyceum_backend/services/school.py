@@ -1,6 +1,6 @@
 from fastapi import status
 from fastapi.exceptions import HTTPException
-from sqlalchemy import exc, select, ScalarResult
+from sqlalchemy import exc, ScalarResult, select
 
 from lyceum_backend.db import tables
 from lyceum_backend.schemas import school as school_schemas
@@ -22,14 +22,21 @@ class SchoolService(BaseService):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
         return school
 
-    async def create(self, school_schema: school_schemas.SchoolCreate) -> tables.School:
+    async def create(
+            self,
+            school_schema: school_schemas.SchoolCreate
+            ) -> tables.School:
         school = tables.School(**school_schema.model_dump())
         self.session.add(school)
         await self.session.commit()
         self.response.status_code = status.HTTP_201_CREATED
         return school
 
-    async def update(self, school_id: int, school_schema: school_schemas.SchoolUpdate) -> tables.School:
+    async def update(
+            self,
+            school_id: int,
+            school_schema: school_schemas.SchoolUpdate
+            ) -> tables.School:
         query = select(tables.School)
         query = query.filter_by(id=school_id)
         school = await self.session.scalar(query)

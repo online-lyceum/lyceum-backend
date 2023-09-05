@@ -4,7 +4,6 @@ from fastapi import FastAPI
 
 from lyceum_backend import api
 
-
 logging.basicConfig(
     level=logging.DEBUG,
     format="[%(asctime)s] [%(process)s] [%(levelname)s] "
@@ -22,8 +21,12 @@ def create_application():
         logger=logger
     )
     application.include_router(api.hello.router)
-    application.include_router(api.user.router)
     application.include_router(api.auth.router)
+    application.include_router(api.user.router)
+    application.include_router(api.school.router)
+    application.include_router(api.group.router)
+    application.include_router(api.subgroup.router)
+    application.include_router(api.lesson.router)
     return application
 
 

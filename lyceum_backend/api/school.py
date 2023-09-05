@@ -5,7 +5,6 @@ from fastapi import APIRouter, Depends
 from lyceum_backend import schemas
 from lyceum_backend.services.school import SchoolService
 
-
 logger = logging.getLogger(__name__)
 router = APIRouter(
     prefix='/api/schools',
@@ -14,8 +13,8 @@ router = APIRouter(
 
 
 @router.get(
-    '/',
-    response_model=schemas.school.School
+    '',
+    response_model=list[schemas.school.School]
 )
 async def get_schools(
         service: SchoolService = Depends()
@@ -39,7 +38,7 @@ async def create_school(
         school_schema: schemas.school.SchoolCreate,
         service: SchoolService = Depends()
 ):
-    return await service.create_school(school_schema)
+    return await service.create(school_schema)
 
 
 @router.patch(
@@ -51,7 +50,7 @@ async def patch_school(
         school_schema: schemas.school.SchoolUpdate,
         service: SchoolService = Depends()
 ):
-    return await service.update_school(school_id, school_schema)
+    return await service.update(school_id, school_schema)
 
 
 @router.delete(
