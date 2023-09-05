@@ -8,14 +8,16 @@ from lyceum_backend.services.base import BaseService
 
 
 class SubgroupService(BaseService):
-    async def get_all(self) -> ScalarResult[tables.Subgroup]:
+    async def get_list(self, school_id: int | None = None) -> ScalarResult[tables.Subgroup]:
         query = select(tables.Subgroup)
+        if school_id is not None:
+            query = query.join(tables.Group).filter_by(school_id=school_id)
         query = query.order_by(tables.Subgroup.id)
         return await self.session.scalars(query)
 
     async def get(
             self,
-            subgroup_id: int | None = None
+            subgroup_id: int | None = None,
             ) -> tables.Subgroup | None:
         query = select(tables.Subgroup)
         if subgroup_id is not None:
