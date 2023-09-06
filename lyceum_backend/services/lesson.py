@@ -31,6 +31,35 @@ class LessonService(BaseService):
         if subgroup_id is not None:
             query = query.filter(tables.Subgroup.id == subgroup_id)
         if group_id is not None:
+            query = query.join(tables.Subgroup)
+            query = query.filter_by(group_id=group_id)
+        query = query.order_by(tables.Lesson.start_dt)
+        return await self.session.scalars(query)
+
+    async def get_pack(
+            self,
+            day: dt.date,
+            group_id: int | None = None,
+            subgroup_id: int | None = None
+    ) -> ScalarResult[tables.Lesson]:
+        if group_id is None and subgroup_id is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+        query = select(tables.Lesson)
+        query = query.filter(
+            tables.Lesson.start_dt > (dt.datetime.fromisoformat(
+                day.isoformat()
+            ) - dt.timedelta(days=7))
+        )
+        query = query.filter(
+            tables.Lesson.end_dt < dt.datetime.fromisoformat(
+                day.isoformat()
+            ) + dt.timedelta(days=7)
+        )
+        query = query.join(tables.LessonSubgroup)
+        if subgroup_id is not None:
+            query = query.filter(tables.Subgroup.id == subgroup_id)
+        if group_id is not None:
+            query = query.join(tables.Subgroup)
             query = query.filter_by(group_id=group_id)
         query = query.order_by(tables.Lesson.start_dt)
         return await self.session.scalars(query)
