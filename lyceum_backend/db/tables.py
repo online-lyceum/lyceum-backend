@@ -28,7 +28,7 @@ class Group(Base):
     id = Column(Integer, autoincrement=True, primary_key=True, index=True)
     school_id = Column(
         ForeignKey('schools.id', ondelete='CASCADE'), nullable=False
-        )
+    )
     number = Column(Integer)
     letter = Column(String)
 
@@ -39,7 +39,7 @@ class Subgroup(Base):
     name = Column(String, default="")
     group_id = Column(
         ForeignKey('groups.id', ondelete='CASCADE'), nullable=False
-        )
+    )
 
 
 class Lesson(Base):
@@ -57,8 +57,18 @@ class LessonSubgroup(Base):
     lesson_id = Column(
         ForeignKey('lessons.id', ondelete='CASCADE'), nullable=False,
         primary_key=True
-        )
+    )
     subgroup_id = Column(
         ForeignKey('subgroups.id', ondelete='CASCADE'), nullable=False,
         primary_key=True
-        )
+    )
+
+
+class Break(Base):
+    __tablename__ = "breaks"
+    lesson_id = Column(
+        ForeignKey('lessons.id', ondelete='CASCADE'), nullable=False,
+        primary_key=True
+    )
+    start_dt = Column(DateTime, nullable=False)
+    end_dt = Column(DateTime, nullable=False)

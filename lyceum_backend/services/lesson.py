@@ -20,7 +20,7 @@ class LessonService(BaseService):
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
         query = select(tables.Lesson)
         query = query.filter(
-            tables.Lesson.start_dt > dt.datetime.fromisoformat(day.isoformat())
+            tables.Lesson.start_dt > day.isoformat()
         )
         query = query.filter(
             tables.Lesson.end_dt < dt.datetime.fromisoformat(
@@ -69,14 +69,24 @@ class LessonService(BaseService):
             lesson_schema: lesson_schemas.LessonCreate
     ) -> tables.Lesson:
         lesson = tables.Lesson(
-            **lesson_schema.model_dump(exclude={'start_dt', 'end_dt'})
+            **lesson_schema.model_dump(exclude={'start_dt', 'end_dt', 'breaks'})
         )
-        lesson.start_dt = lesson_schema.start_dt.replace(tzinfo=None)
-        lesson.end_dt = lesson_schema.end_dt.replace(tzinfo=None)
+        lesson.start_dt = self._normalize_time(lesson_schema.start_dt)
+        lesson.end_dt = self._normalize_time(lesson_schema.end_dt)
         self.session.add(lesson)
+        for break_time in lesson_schema.breaks:
+            self.session.add(
+                tables.Break(
+                    start_dt=self._normalize_time(break_time.start_dt),
+                    end_dt=self._normalize_time(break_time.end_dt)
+                )
+            )
         await self.session.commit()
         self.response.status_code = status.HTTP_201_CREATED
         return lesson
+
+    async def _normalize_time(self, datetime: dt.datetime):
+        return datetime.replace(tzinfo=None)
 
     async def update(
             self,
