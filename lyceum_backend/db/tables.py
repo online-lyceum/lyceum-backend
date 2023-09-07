@@ -50,6 +50,7 @@ class Lesson(Base):
     end_dt = Column(DateTime, nullable=False)
     room = Column(String, default='')
     teacher = Column(String, default='')
+    breaks = Column(String, default='[]', nullable=False)
 
 
 class LessonSubgroup(Base):
@@ -62,13 +63,3 @@ class LessonSubgroup(Base):
         ForeignKey('subgroups.id', ondelete='CASCADE'), nullable=False,
         primary_key=True
     )
-
-
-class Break(Base):
-    __tablename__ = "breaks"
-    lesson_id = Column(
-        ForeignKey('lessons.id', ondelete='CASCADE'), nullable=False,
-        primary_key=True
-    )
-    start_dt = Column(DateTime, nullable=False)
-    end_dt = Column(DateTime, nullable=False)

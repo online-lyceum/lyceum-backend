@@ -66,26 +66,19 @@ class LessonService(BaseService):
 
     async def create(
             self,
-            lesson_schema: lesson_schemas.LessonCreate
+            lesson_schema: lesson_schemas.InsideLessonCreate
     ) -> tables.Lesson:
         lesson = tables.Lesson(
-            **lesson_schema.model_dump(exclude={'start_dt', 'end_dt', 'breaks'})
+            **lesson_schema.model_dump(exclude={'start_dt', 'end_dt'})
         )
         lesson.start_dt = self._normalize_time(lesson_schema.start_dt)
         lesson.end_dt = self._normalize_time(lesson_schema.end_dt)
         self.session.add(lesson)
-        for break_time in lesson_schema.breaks:
-            self.session.add(
-                tables.Break(
-                    start_dt=self._normalize_time(break_time.start_dt),
-                    end_dt=self._normalize_time(break_time.end_dt)
-                )
-            )
         await self.session.commit()
         self.response.status_code = status.HTTP_201_CREATED
         return lesson
 
-    async def _normalize_time(self, datetime: dt.datetime):
+    def _normalize_time(self, datetime: dt.datetime):
         return datetime.replace(tzinfo=None)
 
     async def update(

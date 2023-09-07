@@ -14,18 +14,25 @@ class LessonBase(BaseModel):
     teacher: str
     start_dt: dt.datetime
     end_dt: dt.datetime
-    breaks: list[Break]
 
     class Config:
         from_attributes = True
 
 
 class LessonCreate(LessonBase):
-    pass
+    breaks: list[Break]
+
+
+class InsideLessonCreate(LessonBase):
+    breaks: str = "[]"
+
+    class Config:
+        from_attributes = True
 
 
 class Lesson(LessonBase):
     id: int
+    breaks: list[Break]
 
 
 class LessonUpdate(BaseModel):

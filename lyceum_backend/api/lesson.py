@@ -1,4 +1,5 @@
 import datetime as dt
+import json
 import logging
 
 from fastapi import APIRouter, Depends
@@ -13,6 +14,22 @@ router = APIRouter(
 )
 
 
+def lesson_model_to_lesson(lesson_model):
+    return schemas.lesson.Lesson(
+        id=lesson_model.id,
+        name=lesson_model.name,
+        room=lesson_model.room,
+        teacher=lesson_model.teacher,
+        start_dt=lesson_model.start_dt,
+        end_dt=lesson_model.end_dt,
+        breaks=json.loads(lesson_model.breaks)
+    )
+
+
+def lesson_models_to_lessons(lesson_models):
+    return [lesson_model_to_lesson(model) for model in lesson_models]
+
+
 @router.get(
     '/pack/{date}',
     response_model=list[schemas.lesson.Lesson],
@@ -25,7 +42,8 @@ async def get_lessons(
         subgroup_id: int | None = None,
         service: LessonService = Depends()
 ):
-    return await service.get_pack(date, group_id, subgroup_id)
+    lesson_models = await service.get_pack(date, group_id, subgroup_id)
+    return lesson_models_to_lessons(lesson_models)
 
 
 @router.get(
@@ -38,7 +56,17 @@ async def get_lesson(
         subgroup_id: int | None = None,
         service: LessonService = Depends()
 ):
-    return await service.get_day(date, group_id, subgroup_id)
+    lesson_models = await service.get_day(date, group_id, subgroup_id)
+    return lesson_models_to_lessons(lesson_models)
+
+
+def dump_breaks(breaks: list[schemas.lesson.Break]) -> str:
+    return json.dumps(
+        [{
+            'start_dt': break_time.start_dt.isoformat(),
+            'end_dt': break_time.end_dt.isoformat()
+        } for break_time in breaks]
+    )
 
 
 @router.post(
@@ -49,7 +77,12 @@ async def create_lesson(
         lesson_schema: schemas.lesson.LessonCreate,
         service: LessonService = Depends()
 ):
-    return await service.create(lesson_schema)
+    inside_lesson_schema = schemas.lesson.InsideLessonCreate(
+        **lesson_schema.model_dump(exclude={'breaks'}),
+        breaks=dump_breaks(lesson_schema.breaks)
+    )
+    lesson_model = await service.create(inside_lesson_schema)
+    return lesson_models_to_lessons([lesson_model])[0]
 
 
 @router.patch(
@@ -61,7 +94,8 @@ async def patch_lesson(
         lesson_schema: schemas.lesson.LessonUpdate,
         service: LessonService = Depends()
 ):
-    return await service.update(lesson_id, lesson_schema)
+    lesson_model = await service.update(lesson_id, lesson_schema)
+    return lesson_models_to_lessons([lesson_model])[0]
 
 
 @router.delete(
