@@ -28,7 +28,10 @@ class GroupService(BaseService):
             ) -> tables.Group:
         group = tables.Group(**group_schema.model_dump())
         self.session.add(group)
-        await self.session.commit()
+        try:
+            await self.session.commit()
+        except exc.IntegrityError:
+            raise HTTPException(status.HTTP_409_CONFLICT)
         self.response.status_code = status.HTTP_201_CREATED
         return group
 

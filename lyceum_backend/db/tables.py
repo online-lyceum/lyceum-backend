@@ -1,4 +1,5 @@
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import UniqueConstraint
 
 from lyceum_backend.db.base import Base
 
@@ -31,6 +32,10 @@ class Group(Base):
     )
     number = Column(Integer)
     letter = Column(String)
+
+    __table_args__ = (
+        UniqueConstraint('school_id', 'number', 'letter'),
+    )
 
 
 class Subgroup(Base):

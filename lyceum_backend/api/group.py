@@ -32,7 +32,7 @@ async def get_group(
 
 @router.post(
     '',
-    response_model=schemas.group.Group
+#    response_model=schemas.group.Group
 )
 async def create_group(
         group_schema: schemas.group.GroupCreate,
